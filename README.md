@@ -138,5 +138,3 @@ Ensure you have configured your test environment correctly in `hardhat.config.js
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
-
-This `README.md` file provides a detailed overview of your project, including functionalities, deployment instructions, and usage guidelines. Adjust any paths or network names as needed based on your project setup.
