@@ -1,6 +1,5 @@
-Sure! Here is a detailed `README.md` file for your GitHub repository, explaining the functionalities of the `TokenMaster` smart contract.
-
----
+markdown
+Copy code
 
 # TokenMaster
 
@@ -45,96 +44,77 @@ function list(
     string memory _time,
     string memory _location
 ) public onlyOwner
-```
-
 Lists a new event. Only callable by the contract owner.
 
-#### mint
-
-```solidity
+mint
+solidity
+Copy code
 function mint(uint _id, uint256 _seat) public payable
-```
-
 Allows users to buy tickets for a specific event. Each ticket is an NFT.
 
-#### getOccasion
-
-```solidity
+getOccasion
+solidity
+Copy code
 function getOccasion(uint256 _id) public view returns (Occasion memory)
-```
-
 Returns details of a specific event.
 
-#### getSeatsTaken
-
-```solidity
+getSeatsTaken
+solidity
+Copy code
 function getSeatsTaken(uint256 _id) public view returns (uint256[] memory)
-```
-
 Returns the list of seats taken for a specific event.
 
-#### withdraw
-
-```solidity
+withdraw
+solidity
+Copy code
 function withdraw() public onlyOwner
-```
-
 Allows the contract owner to withdraw funds collected from ticket sales.
 
-## Deployment
+Deployment
+To deploy the contract, use the deploy.js script located in the scripts directory.
 
-To deploy the contract, use the `deploy.js` script located in the `scripts` directory.
-
-```bash
+bash
+Copy code
 npx hardhat run scripts/deploy.js --network <network_name>
-```
+Replace <network_name> with the name of the network you want to deploy to (e.g., rinkeby, mainnet).
 
-Replace `<network_name>` with the name of the network you want to deploy to (e.g., `rinkeby`, `mainnet`).
-
-## Testing
-
+Testing
 To run the tests for the smart contract, use the following command:
 
-```bash
+bash
+Copy code
 npx hardhat test
+Ensure you have configured your test environment correctly in hardhat.config.js.
+
+Installation
+Clone the repository:
+
+bash
+Copy code
+git clone https://github.com/Chizitere01/TokenMaster.git
+cd TokenMaster
+Install dependencies:
+
+bash
+Copy code
+yarn install
+Usage
+Compile the contract:
+
+bash
+Copy code
+npx hardhat compile
+Deploy the contract:
+
+bash
+Copy code
+npx hardhat run scripts/deploy.js --network <network_name>
+Interact with the contract:
+
+Use the Hardhat console or write scripts to interact with the deployed contract.
+Ensure to update the contract address and other relevant details in your interaction scripts.
+License
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+Copy code
 ```
-
-Ensure you have configured your test environment correctly in `hardhat.config.js`.
-
-## Installation
-
-1. **Clone the repository**:
-
-   ```bash
-   git clone https://github.com/Chizitere01/TokenMaster.git
-   cd TokenMaster
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   yarn install
-   ```
-
-## Usage
-
-1. **Compile the contract**:
-
-   ```bash
-   npx hardhat compile
-   ```
-
-2. **Deploy the contract**:
-
-   ```bash
-   npx hardhat run scripts/deploy.js --network <network_name>
-   ```
-
-3. **Interact with the contract**:
-   - Use the Hardhat console or write scripts to interact with the deployed contract.
-   - Ensure to update the contract address and other relevant details in your interaction scripts.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
