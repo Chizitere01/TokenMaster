@@ -98,4 +98,8 @@ contract TokenMaster is ERC721 {
         (bool success, ) = owner.call{value: address(this).balance}("");
         require(success);
     }
+
+    function getTotalOccasions() public view returns (uint256) {
+        return totalOccasions;
+    }
 }
