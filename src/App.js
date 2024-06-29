@@ -6,6 +6,7 @@ import Navigation from "./components/Navigation";
 import Sort from "./components/Sort";
 import Card from "./components/Card";
 import SeatChart from "./components/SeatChart";
+import Home from "./components/Home";
 
 // ABIs
 import TokenMaster from "./abis/TokenMaster.json";
@@ -24,16 +25,38 @@ function App() {
   const [toggle, setToggle] = useState(false);
 
   const loadBlockchainData = async () => {
+    if (!window.ethereum) {
+      console.error("MetaMask is not installed!");
+      return;
+    }
+
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       setProvider(provider);
 
+      const accounts = await provider.send("eth_requestAccounts", []);
+      if (accounts.length === 0) {
+        console.error("No accounts found");
+        return;
+      }
+      setAccount(ethers.utils.getAddress(accounts[0]));
+
       const network = await provider.getNetwork();
+      console.log("Network:", network);
       const tokenMasterAddress = config[network.chainId]?.TokenMaster.address;
       if (!tokenMasterAddress) {
         console.error("TokenMaster address not found in config");
         return;
       }
+
+      // Check if contract is deployed at the address
+      const code = await provider.getCode(tokenMasterAddress);
+      if (code === "0x") {
+        console.error("No contract deployed at the provided address");
+        return;
+      }
+
+      console.log("TokenMaster Address:", tokenMasterAddress);
 
       const tokenMaster = new ethers.Contract(
         tokenMasterAddress,
@@ -43,23 +66,24 @@ function App() {
       setTokenMaster(tokenMaster);
 
       try {
-        const totalOccasions = await tokenMaster.callStatic.getTotalOccasions();
+        const totalOccasions = await tokenMaster.getTotalOccasions();
         console.log("Total Occasions:", totalOccasions.toNumber());
 
-        const occasions = [];
-        for (let i = 1; i <= totalOccasions; i++) {
-          const occasion = await tokenMaster.getOccasion(i);
-          occasions.push(occasion);
-        }
+        const occasions = await Promise.all(
+          Array.from({ length: totalOccasions.toNumber() }, (_, i) =>
+            tokenMaster.getOccasion(i + 1)
+          )
+        );
         setOccasions(occasions);
       } catch (err) {
         console.error("Error accessing totalOccasions:", err);
       }
 
-      window.ethereum.on("accountsChanged", async () => {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
+      window.ethereum.on("accountsChanged", async (accounts) => {
+        if (accounts.length === 0) {
+          console.error("No accounts found");
+          return;
+        }
         const account = ethers.utils.getAddress(accounts[0]);
         setAccount(account);
       });
@@ -86,7 +110,13 @@ function App() {
 
       <div className="cards">
         {occasions.map((occasion, index) => (
-          <p key={index}>{occasion.name}</p>
+          <Card
+            key={index}
+            occasion={occasion}
+            toggle={toggle}
+            setToggle={setToggle}
+            setOccasion={setOccasion}
+          />
         ))}
       </div>
 

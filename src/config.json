@@ -1,19 +1,20 @@
 {
     "31337": {
         "TokenMaster": {
-            "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+            "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F"
         }
     },
 
     "2522": {
         "TokenMaster": {
-            "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+            "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F"
         }
     },
 
     "11155111": {
         "TokenMaster": {
-            "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+            "address": "0x0793b8483a442744E94bCA9c39a55D3E814233b3"
         }
     }
+
 }

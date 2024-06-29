@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-//importing the openzepplin ERC721 token contract
-
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract TokenMaster is ERC721 {
@@ -10,7 +8,6 @@ contract TokenMaster is ERC721 {
     uint256 public totalOccasions;
     uint256 public totalSupply;
 
-    // structs are objects you can give arbitrary parameters
     struct Occasion {
         uint256 id;
         string name;
@@ -21,17 +18,14 @@ contract TokenMaster is ERC721 {
         string time;
         string location;
     }
-    // We use the mapping to add the struct to the function.
 
     mapping(uint256 => Occasion) occasions;
-    // to prevent the purchase of an nft twice
     mapping(uint256 => mapping(address => bool)) public hasBought;
     mapping(uint256 => mapping(uint256 => address)) public seatTaken;
-    mapping(uint256 => uint256[]) seatsTaken; //Array of all the seats taken
+    mapping(uint256 => uint256[]) seatsTaken;
 
-    // special code to add to a function
     modifier onlyOwner() {
-        require(msg.sender == owner); // To prevent any other person from creating an event on the platform
+        require(msg.sender == owner);
         _;
     }
 
@@ -39,7 +33,7 @@ contract TokenMaster is ERC721 {
         string memory _name,
         string memory _symbol
     ) ERC721(_name, _symbol) {
-        owner = msg.sender; //The address on the person calling the constructor function.
+        owner = msg.sender;
     }
 
     function list(
@@ -63,28 +57,30 @@ contract TokenMaster is ERC721 {
         );
     }
 
-    // to enable users to buy tickets. we use safemint function from openzepplin library and pass the arguements needed to create the nft.
-    function mint(uint _id, uint256 _seat) public payable {
-        // Require that _id is not 0 or less than total occasions
+    function mint(uint256 _id, uint256 _seat) public payable {
+        // Require that _id is not 0 or less than total occasions...
         require(_id != 0);
         require(_id <= totalOccasions);
 
-        //Require that ETH sent is greater than cost...
+        // Require that ETH sent is greater than cost...
         require(msg.value >= occasions[_id].cost);
 
-        //Require that the seat is not taken, and the seat exists...
+        // Require that the seat is not taken, and the seat exists...
         require(seatTaken[_id][_seat] == address(0));
         require(_seat <= occasions[_id].maxTickets);
 
-        occasions[_id].tickets -= 1; // To update on ticket remaining after buying
-        hasBought[_id][msg.sender] = true; // Update buying status
-        seatTaken[_id][_seat] = msg.sender; //  To assign seat
-        seatsTaken[_id].push(_seat); // To update the seats currently taken
+        occasions[_id].tickets -= 1; // <-- Update ticket count
+
+        hasBought[_id][msg.sender] = true; // <-- Update buying status
+        seatTaken[_id][_seat] = msg.sender; // <-- Assign seat
+
+        seatsTaken[_id].push(_seat); // <-- Update seats currently taken
+
         totalSupply++;
-        _safeMint(msg.sender, totalSupply); // this will craete an NFT with the id of 1 for the address(buyer)
+
+        _safeMint(msg.sender, totalSupply);
     }
 
-    //Reader functions, to read the occasion from the occasion mapping
     function getOccasion(uint256 _id) public view returns (Occasion memory) {
         return occasions[_id];
     }
@@ -93,13 +89,12 @@ contract TokenMaster is ERC721 {
         return seatsTaken[_id];
     }
 
-    //To enable the developer(owner) withdraw the funds from the contract
+    function getTotalOccasions() public view returns (uint256) {
+        return totalOccasions;
+    }
+
     function withdraw() public onlyOwner {
         (bool success, ) = owner.call{value: address(this).balance}("");
         require(success);
-    }
-
-    function getTotalOccasions() public view returns (uint256) {
-        return totalOccasions;
     }
 }
